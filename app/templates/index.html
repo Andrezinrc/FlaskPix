@@ -3,13 +3,17 @@
 {% block content %}
     <div class="container">
     <h1>Bem-vindo ao Sistema de Pagamentos!</h1>
+    <p>Este sistema permite gerenciar pagamentos e gerar códigos de Pix de forma prática e segura.</p>
+    <br></br>
     {% if current_user.is_authenticated %}
-        <p>Você está logado como {{ current_user.username }}.</p>
+        <h4>Você está logado como <span>{{ current_user.username }}.</span></h4>
         <br></br>
         <a href="{{ url_for('dashboard') }}"><button>Ir para o Dashboard</button></a>
 
     {% else %}
-        <p><a href="{{ url_for('login') }}"><button>Login</button></a> para acessar o sistema.</p>
+        <p>Faça login para acessar o sistema.
+        <br></br>
+        <p><a href="{{ url_for('login') }}"><button>Login</button></a></p>
     </div>
     {% endif %}
 {% endblock %}

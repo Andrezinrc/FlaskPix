@@ -7,18 +7,17 @@
     
     <div class="boas-vindas-dash">
         <h2>Bem-vindo, {{ username }}!</h2>
-        
-    <h3>Saldo Atual: R$ {% if balance is not none %}{{ balance }}{% else %}0{% endif %}</h3>
+        <h3><i class="fas fa-wallet"></i> Saldo Atual: R$ {% if balance is not none %}{{ balance }}{% else %}0{% endif %}</h3>
     </div>
-    <h3>Gerar Pix</h3>
+    <h3><i class="fas fa-credit-card"></i> Gerar Pix</h3>
     <input type="number" id="valor_pix" placeholder="Digite o valor">
     <button onclick="gerarPix()">Gerar Pix</button>
 
     <h3>Histórico de Pagamentos</h3>
-    <ul class="historico-pagamentos">
-        {% for payment in payments %}
-            <li>R$ {{ payment.amount }} - Código Pix:  <a style="color: #ff7f00; text-decoration: underline;">{{ payment.pix_code }}</a></li>
-        {% endfor %}
+    <ul class="historico-pagamentos" style="color: #ff7f00; text-decoration: underline;">
+    {% for payment in payments %}
+        <li><i class="fas fa-check-circle"></i> R$ {{ payment.amount }} - Código Pix: {{ payment.pix_code }}</li>
+    {% endfor %}
     </ul>
     </div>
     <script>
