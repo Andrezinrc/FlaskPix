@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="container">
+    
+    <div class="boas-vindas-dash">
+        <h2>Bem-vindo, {{ username }}!</h2>
+        
+    <h3>Saldo Atual: R$ {% if balance is not none %}{{ balance }}{% else %}0{% endif %}</h3>
+    </div>
+    <h3>Gerar Pix</h3>
+    <input type="number" id="valor_pix" placeholder="Digite o valor">
+    <button onclick="gerarPix()">Gerar Pix</button>
+
+    <h3>Histórico de Pagamentos</h3>
+    <ul class="historico-pagamentos">
+        {% for payment in payments %}
+            <li>R$ {{ payment.amount }} - Código Pix:  <a style="color: #ff7f00; text-decoration: underline;">{{ payment.pix_code }}</a></li>
+        {% endfor %}
+    </ul>
+    </div>
+    <script>
+        function gerarPix() {
+            let valor = document.getElementById("valor_pix").value;
+
+            fetch("{{ url_for('gerar_pix') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: valor })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message + " Código: " + data.pix_code))
+            .catch(error => alert("Erro ao gerar Pix!"));
+        }
+    </script>
+{% endblock %}

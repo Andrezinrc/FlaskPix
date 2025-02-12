@@ -1,0 +1,12 @@
+flask
+flask_sqlalchemy
+flask_migrate
+flask_login
+python-dotenv
+requests
+cryptography==2.1.4
+qrcode
+flask-wtf
+pandas
+matplotlib
+flask-socketio

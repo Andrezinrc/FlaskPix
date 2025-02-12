@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, initial-scale=1">
+    <title>{% block title %}Sistema de Pagamento{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header class="cabecalho">
+        <div class="titulo">
+            <h2>AndréPay</h2>
+        </div>
+        <nav class="nav-bar">
+            <ul class="menu-desk">
+                <li class="nav-list"><a class="nav-link" href="{{ url_for('index') }}">Início</a></li>
+                {% if current_user.is_authenticated %}
+                    <li class="nav-list"><a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                    <li class="nav-list"><a class="nav-link" href="{{ url_for('logout') }}">Sair</a></li>
+                {% else %}
+                    <li class="nav-list"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <footer>
+        <p>Desenvolvido por <span>Andrezinrc.</span></p>
+    </footer>
+</body>
+</html>
