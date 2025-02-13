@@ -9,25 +9,47 @@
         <h2>Bem-vindo, {{ username }}!</h2>
         <h3><i class="fas fa-wallet"></i> Saldo Atual: R$ {% if balance is not none %}{{ balance }}{% else %}0{% endif %}</h3>
     </div>
+    
+    <br></br>
+    <div>
     <h3><i class="fas fa-credit-card"></i> Gerar Pix</h3>
+    <div style="display: flex; gap:10px;">
     <input type="number" id="valor_pix" placeholder="Digite o valor">
+    <input type="text" id="chave_pix" placeholder="Digite a chave Pix do destinatário">
+    </div>
     <button onclick="gerarPix()">Gerar Pix</button>
+    </div>
 
+    <br></br>
+    <div>
     <h3>Histórico de Pagamentos</h3>
-    <ul class="historico-pagamentos" style="color: #ff7f00; text-decoration: underline;">
+    <ul class="historico-pagamentos" style="text-decoration: underline;">
     {% for payment in payments %}
-        <li><i class="fas fa-check-circle"></i> R$ {{ payment.amount }} - Código Pix: {{ payment.pix_code }}</li>
+        <li>
+            <i class="fas fa-check-circle"></i> 
+            R$ {{ payment.amount }} - Código Pix: <a style="color: #ff7f00;">{{ payment.pix_code }}</a> - 
+            <strong>Status: {{ payment.status }}</strong>
+        </li>
     {% endfor %}
     </ul>
     </div>
+    </div>
+
     <script>
         function gerarPix() {
             let valor = document.getElementById("valor_pix").value;
+            let chave = document.getElementById("chave_pix").value;
+
+            if (!valor || !chave) {
+                alert("Por favor, insira o valor e a chave Pix do destinatário.");
+                return;
+            }
 
             fetch("{{ url_for('gerar_pix') }}", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: valor })
+                body: JSON.stringify({ amount: valor, recipient_key: chave })
+
             })
             .then(response => response.json())
             .then(data => alert(data.message + " Código: " + data.pix_code))

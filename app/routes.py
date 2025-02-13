@@ -48,9 +48,13 @@ def logout():
 @app.route("/gerar_pix", methods=["POST"])
 @login_required
 def gerar_pix():
-    amount = request.json.get("amount")
-    if not amount:
-        return jsonify({"error": "Valor inválido"}), 400
+    """Gera um pix e armazena no banco"""
+    data = request.json
+    amount = data.get("amount")
+    recipient_key = data.get("recipient_key")
+
+    if not amount or not recipient_key:
+        return jsonify({"error": "Valor ou chave Pix inválidos"}), 400
 
     try:
         amount = float(amount)
@@ -58,10 +62,16 @@ def gerar_pix():
         return jsonify({"error": "Valor de pagamento inválido"}), 400
 
     pix_code = f"000201{random.randint(100000, 999999)}"
-    
-    current_user.update_balance(amount)
 
-    new_payment = Payment(user_id=current_user.id, amount=amount, pix_code=pix_code)
+
+    new_payment = Payment(
+        user_id=current_user.id,
+        amount=amount,
+        pix_code=pix_code,
+        recipient_key=recipient_key,
+        status="pendente"
+    )
+    
     db.session.add(new_payment)
     db.session.commit()
 
@@ -71,6 +81,44 @@ def gerar_pix():
 @app.route("/extrato")
 @login_required
 def extrato():
+    """Retorna o extrato dos pagamento do usuario"""
     payments = Payment.query.filter_by(user_id=current_user.id).all()
-    extrato_data = [{"amount": p.amount, "pix_code": p.pix_code} for p in payments]
+    extrato_data = [
+        {
+            "amount": p.amount,
+            "pix_code": p.pix_code,
+            "recipient_key": p.recipient_key,
+            "status": p.status,
+            "timestamp": p.timestamp.strftime("%d/%m/%Y %H:%M:%S")
+        } 
+        for p in payments
+    ]
     return jsonify(extrato_data)
+
+
+@app.route("/confirmar_pix", methods=["POST"])
+@login_required
+def confirmar_pix():
+    """Simula a confirmacao de um pix"""
+    data = request.json
+    pix_code = data.get("pix_code")
+
+    payment = Payment.query.filter_by(pix_code=pix_code, user_id=current_user.id).first()
+    
+    if not payment:
+        return jsonify({"error": "Pagamento não encontrado"}), 404
+ 
+    if payment.status != "confirmado":
+        payment.status = "confirmado"
+        current_user.balance += payment.amount  
+
+        db.session.commit()
+
+        multiplicador = 1.05
+
+        current_user.balance *= multiplicador
+        db.session.commit()
+
+        return jsonify({"message": "Pix confirmado com sucesso!", "new_balance": current_user.balance})
+
+    return jsonify({"error": "Pix já foi confirmado."}), 400

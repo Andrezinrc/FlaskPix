@@ -12,7 +12,6 @@ class User(db.Model, UserMixin):
     
     def update_balance(self, amount):
         """Atualiza o saldo do usuário"""
-
         if isinstance(amount, str):
             amount = float(amount)
         self.balance += amount
@@ -24,4 +23,13 @@ class Payment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     pix_code = db.Column(db.String(100), unique=True, nullable=False)
+    recipient_key = db.Column(db.String(100), nullable=False)
+
+    status = db.Column(db.String(20), default="pendente")
+
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
     user = db.relationship('User', backref=db.backref('payments', lazy=True))
+
+    def __repr__(self):
+        return f"<Payment {self.pix_code} - {self.amount} - {self.status}>"
