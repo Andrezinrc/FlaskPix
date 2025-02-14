@@ -27,8 +27,13 @@
     {% for payment in payments %}
         <li>
             <i class="fas fa-check-circle"></i> 
-            R$ {{ payment.amount }} - Código Pix: <a style="color: #ff7f00;">{{ payment.pix_code }}</a> - 
-            <strong>Status: {{ payment.status }}</strong>
+            R$ {{ payment.amount }} - Código Pix: <a>{{ payment.pix_code }}</a> - 
+           {% if payment.status == "confirmado" %}                <strong style="color:  #388E3C;" >Status: {{ payment.status }}</strong>
+           {% elif payment.status == "pendente"  %}
+                <strong style="color: #FBC02D;">Status: {{ payment.status }}</strong>
+           {% else %}
+                <strong>Status: {{ payment.status }}</strong>
+           {% endif %}
         </li>
     {% endfor %}
     </ul>

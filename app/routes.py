@@ -22,6 +22,7 @@ def dashboard():
                            balance=current_user.balance,
                            payments=payments)
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
